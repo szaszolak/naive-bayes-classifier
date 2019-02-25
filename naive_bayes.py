@@ -4,28 +4,6 @@
 import pandas as pd
 import numpy as np
 
-file_name = input('Enter csv file name: ')
-chess = pd.read_csv(file_name)
-
-
-columns = list(chess)
-
-mapers = {}
-for column in columns:
-    values = chess[column].dropna(inplace=False).unique()
-    maper = {}
-    for index, value in enumerate(values):
-        maper[value]=index
-    mapped = chess[column].map(maper, na_action='ignore')
-    chess[column] = mapped
-    mapers[column] = maper
-
-non_empty = chess.dropna(axis=0, inplace=False)
-
-missing_columns = chess[chess.isnull().any(axis=1)]
-
-targets = chess.columns[chess.isnull().any().nonzero()]
-
 def bayes_propability(data_frame_slice_positive, data_frame_slice_negative, total_rows, target_row):
     positive_rows = data_frame_slice_positive.shape[0]
     negative_rows = data_frame_slice_negative.shape[0]
@@ -45,6 +23,27 @@ def bayes_propability(data_frame_slice_positive, data_frame_slice_negative, tota
     negative_product =  np.prod(negative_propabilities)
     return positive_product / (positive_product + negative_product)
 
+
+file_name = input('Enter csv file name: ')
+chess = pd.read_csv(file_name)
+
+columns = list(chess)
+
+mapers = {}
+for column in columns:
+    values = chess[column].dropna(inplace=False).unique()
+    maper = {}
+    for index, value in enumerate(values):
+        maper[value]=index
+    mapped = chess[column].map(maper, na_action='ignore')
+    chess[column] = mapped
+    mapers[column] = maper
+
+non_empty = chess.dropna(axis=0, inplace=False)
+
+missing_columns = chess[chess.isnull().any(axis=1)]
+
+targets = chess.columns[chess.isnull().any().nonzero()]
 
 for target in targets:
     maper = mapers[target]
